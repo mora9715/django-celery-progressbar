@@ -3,14 +3,17 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+readme = open("README.rst").read()
+history = open("HISTORY.rst").read().replace(".. :changelog:", "")
+
 setuptools.setup(
     name="django_celery_progressbar",
-    version="0.1.0",
+    version="0.1.1",
     author="Eugene Prodan",
     author_email="mora9715@gmail.com",
     description="Progress bar for Django Celery application",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
+    long_description=readme + "\n\n" + history,
+    long_description_content_type="text/x-rst",
     url="https://github.com/mora9715/django-celery-progressbar",
     packages=setuptools.find_packages(),
     classifiers=[

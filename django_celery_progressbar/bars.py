@@ -70,6 +70,11 @@ class ProgressBar:
         self._progress_obj.total = value
         self._progress_obj.save()
 
+    @property
+    def as_percent(self):
+        """return current progress state in percents"""
+        return f"{(self._progress_obj.progress / self._progress_obj.total) * 100}%"
+
     @classmethod
     def get(cls, task_id):
         """
@@ -79,3 +84,7 @@ class ProgressBar:
         :return: ProgressBar object
         """
         return ProgressBar(task_id, _getter=True)
+
+    def finalize(self):
+        self._progress_obj.progress = self._progress_obj.total
+        self._progress_obj.step = "Complete"
