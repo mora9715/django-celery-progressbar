@@ -1,8 +1,5 @@
 import setuptools
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
-
 readme = open("README.rst").read()
 history = open("HISTORY.rst").read().replace(".. :changelog:", "")
 
