@@ -1,5 +1,5 @@
 language: python
-script: python3 setup.py sdist
+script: true
 
 deploy:
   provider: pypi
@@ -8,3 +8,4 @@ deploy:
     secure: IB+9hUrqpsuIO9V/lCWa3SeZNqi59f4GacRBiCo/kmoSCKZHCkF3L9iTVcDhLz1JR2FobtGIEKM+dhxfSoKLhtLPpnY4/JelKBu8GQRnW7BlPnBEGmi3w0WyQSrsY+IDRo0Ua8JuIlzHdR0mY0E6kXTZ4a4mu+tcVMUozuIj1P9I9wV9EOHxTFy7UUYqqnubD8fUGDTEL+bzjWpknZF9bZvYwkca0gjoCfGE5H4BixmtBLFo/AIjP7zUXs1FK46eJQ4G6h0QML4QrltfPyz7s13h2pmxuyRhDsYKvVn9e2QIMr82br0KwI1N7H4/Uje6pUL1woa6Cd13RqlTeVW7/f855iHq/SN6kAJ6RQ+8ZLc37Yln7VBnOOlhJjF8F0lqjBbZcLUagnkkHLW0xE3iuB/u3/zwUZtrRWTqpV5us21SiGrbt3z6m2s6RMkIoYDqbAIWPVOEzOtS9zror+9v/w9Bz7Q6jzgNl1uu9CCSAS0IMao0YZdGyqrR076zX5Pu0UayVSFoDYUBjJp6o7OuIMqXSPxu9LbZYTssTAZYz0bNSdUGwo++vBrhutrPCn3l0lQIuXm/jL56vRdC3oZXXgtPMki6J/SHStwPqrQdjc/Yc23tgtpdkQjF4tECs+/UuHIehVtO7R5qcSciDpFr4xbLK4n9nvc9UeW1LT0Hiws=
   on:
     branch: master
+  edge: true
