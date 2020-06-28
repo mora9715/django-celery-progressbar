@@ -2,7 +2,8 @@ from django.conf import settings
 
 PROGRESSBAR_DEFAULTS = {
     'PROGRESSBAR_DEFAULT_TOTAL': 100,
-    'PROGRESSBAR_DESTROY_ON_EXIT': False
+    'PROGRESSBAR_DESTROY_ON_EXIT': False,
+    'PROGRESSBAR_DYNAMIC_UPDATE': False
 }
 
 

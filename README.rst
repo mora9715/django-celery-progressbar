@@ -39,8 +39,10 @@ Typical usage on the side of Celery task would look like:
         )
 
         some_work()
-        bar.progress += 5
-        bar.step = 'Making sushi...'
+        bar.update(
+            progress='5',
+            step = 'Making sushi...'
+        )
 
         some_more_work()
         bar.progress.finalize()
@@ -59,7 +61,9 @@ To retireve current progressbar state, you can use built-in getter:
     # or as percent:
     print(bar.as_percent)
 
-    >>> 50%
+    >>> 50.0%
+
+Keep in mind: as ProgressBar fetches DB object on creation, it is not updated dynamically.
 
 =================
 Configuration
@@ -71,10 +75,12 @@ The following default settings can be overridden in your *settings.py*:
 
     PROGRESSBAR_DEFAULT_TOTAL = 100
     PROGRESSBAR_DESTROY_ON_EXIT = False
+    PROGRESSBAR_DYNAMIC_UPDATE = False
 
 
 **PROGRESSBAR_DEFAULT_TOTAL** - Default value for 'Total' progressbar attribute
 **PROGRESSBAR_DESTROY_ON_EXIT** - Destroy model object on task completion
+**PROGRESSBAR_DYNAMIC_UPDATE** - Dynamically update progressbar DB object in runtime. You don't need it turned on in stateless apps
 
 =======
 License

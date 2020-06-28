@@ -7,7 +7,12 @@ class ProgressBar:
     """Progressbar manager class"""
     exceptions = exceptions
 
-    def __init__(self, task_id, total=conf.PROGRESSBAR_DEFAULT_TOTAL, step=None, _getter=False):
+    def __init__(
+            self,
+            task_id,
+            total=conf.PROGRESSBAR_DEFAULT_TOTAL,
+            step=None,
+            _getter=False):
         """
         :param task_id: unique task identifier
         :param total:   maximum progressbar vallue
@@ -17,63 +22,73 @@ class ProgressBar:
         self._getter = _getter
         if self._getter:
             try:
-                self._progress_obj = TaskProgress.objects.get(
+                self._db_obj = TaskProgress.objects.get(
                     task_id=task_id
                 )
             except TaskProgress.DoesNotExist:
                 raise self.exceptions.DoesNotExist(task_id)
         else:
-            self._progress_obj = TaskProgress(
+            self._db_obj = TaskProgress(
                 task_id=task_id,
                 total=total,
                 step=step
             )
-            self._progress_obj.save()
+            self._db_obj.save()
 
     def __str__(self):
-        repr = f"{self._progress_obj.progress} / {self._progress_obj.total}"
-        if self._progress_obj.step:
-            repr += f" | {self._progress_obj.step}"
+        if conf.PROGRESSBAR_DYNAMIC_UPDATE:
+            self._update_db_obj()
+        repr = f"{self._db_obj.progress} / {self._db_obj.total}"
+        if self._db_obj.step:
+            repr += f" | {self._db_obj.step}"
         return repr
 
     def __del__(self):
         """delete progressbar model object if configured so"""
         if not self._getter and conf.PROGRESSBAR_DESTROY_ON_EXIT:
-            self._progress_obj.delete()
+            self._db_obj.delete()
 
     @property
     def progress(self):
-        return self._progress_obj.progress
+        if conf.PROGRESSBAR_DYNAMIC_UPDATE:
+            self._update_db_obj()
+        return self._db_obj.progress
 
     @progress.setter
     def progress(self, value):
-        if self._progress_obj.progress + value >= self._progress_obj.total:
+        if self._db_obj.progress + value >= self._db_obj.total:
             raise self.exceptions.OutOfRange
-        self._progress_obj.progress += value
-        self._progress_obj.save()
+        self._db_obj.progress += value
+        self._db_obj.save()
 
     @property
     def step(self):
-        return self._progress_obj.step
+        if conf.PROGRESSBAR_DYNAMIC_UPDATE:
+            self._update_db_obj()
+        return self._db_obj.step
 
     @step.setter
     def step(self, value):
-        self._progress_obj.step = value
-        self._progress_obj.save()
+        self._db_obj.step = value
+        self._db_obj.save()
 
     @property
     def total(self):
-        return self._progress_obj.total
+        if conf.PROGRESSBAR_DYNAMIC_UPDATE:
+            self._update_db_obj()
+        return self._db_obj.total
 
     @total.setter
     def total(self, value):
-        self._progress_obj.total = value
-        self._progress_obj.save()
+        self._db_obj.total = value
+        self._db_obj.save()
 
     @property
     def as_percent(self):
         """return current progress state in percents"""
-        return f"{(self._progress_obj.progress / self._progress_obj.total) * 100}%"
+        if conf.PROGRESSBAR_DYNAMIC_UPDATE:
+            self._update_db_obj()
+        return f"{(self._db_obj.progress / self._db_obj.total) * 100}%"
 
     @classmethod
     def get(cls, task_id):
@@ -85,6 +100,27 @@ class ProgressBar:
         """
         return ProgressBar(task_id, _getter=True)
 
+    def update(self, **kwargs):
+        """
+        update progressbar state
+
+        :param progress: desired bar progress
+        :param step: desired bar step
+        """
+        if kwargs.get('progress'):
+            self._db_obj.progress = kwargs['progress']
+        if kwargs.get('step'):
+            self._db_obj.step = kwargs['step']
+        self._db_obj.save()
+
+    def _update_db_obj(self):
+        """
+        update DB object
+        """
+        self._db_obj = TaskProgress.objects.get(
+            task_id=self._db_obj.task_id
+        )
     def finalize(self):
-        self._progress_obj.progress = self._progress_obj.total
-        self._progress_obj.step = "Complete"
+        self._db_obj.progress = self._db_obj.total
+        self._db_obj.step = "Complete"
+        self._db_obj.save()
