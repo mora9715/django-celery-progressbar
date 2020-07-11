@@ -35,13 +35,13 @@ Typical usage on the side of Celery task would look like:
         bar = ProgressBar(
             task_id=do_something.request.id,
             total=10,
-            step= 'Drying kelp...'
+            step='Drying kelp...'
         )
 
         some_work()
         bar.update(
             progress='5',
-            step = 'Making sushi...'
+            step='Making sushi...'
         )
 
         some_more_work()
