@@ -1,6 +1,6 @@
-from .models import TaskProgress
 from . import exceptions
 from .app_settings import conf
+from .models import TaskProgress
 
 
 class ProgressBar:
@@ -120,6 +120,7 @@ class ProgressBar:
         self._db_obj = TaskProgress.objects.get(
             task_id=self._db_obj.task_id
         )
+
     def finalize(self):
         self._db_obj.progress = self._db_obj.total
         self._db_obj.step = "Complete"

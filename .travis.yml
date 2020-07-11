@@ -1,5 +1,11 @@
 language: python
-script: true
+
+install:
+  - pip install tox
+
+script:
+  - tox
+
 deploy:
   provider: pypi
   user: mora9715
