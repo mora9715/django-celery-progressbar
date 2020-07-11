@@ -5,7 +5,7 @@ history = open("HISTORY.rst").read().replace(".. :changelog:", "")
 
 setuptools.setup(
     name="django_celery_progressbar",
-    version="0.2.0",
+    version="0.2.1",
     author="Eugene Prodan",
     author_email="mora9715@gmail.com",
     description="Progress bar for Django Celery application",
