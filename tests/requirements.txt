@@ -1,5 +1,6 @@
 django
 pytest
 pytest-django
+pytest-cov
 flake8
 isort
