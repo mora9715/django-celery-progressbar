@@ -8,6 +8,10 @@ Django Celery Progressbar
 .. image:: https://badge.fury.io/py/django-celery-progressbar.svg
   :target: https://badge.fury.io/py/django-celery-progressbar
 
+.. image:: https://coveralls.io/repos/github/mora9715/django-celery-progressbar/badge.svg
+:target: https://coveralls.io/github/mora9715/django-celery-progressbar
+
+
 Simple progressbar for a Django application with Celery. Uses database as a temporary storage.
 
 ============
