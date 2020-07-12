@@ -12,13 +12,16 @@ class ProgressBar:
             task_id,
             total=conf.PROGRESSBAR_DEFAULT_TOTAL,
             step=None,
+            dynamic=conf.PROGRESSBAR_DYNAMIC_UPDATE,
             _getter=False):
         """
         :param task_id: unique task identifier
         :param total:   maximum progressbar vallue
         :param step:    verbose step name. I.e. 'finding symbolic links'
+        :param dynamic: enable dynamic updates
         :param _getter: internal flag
         """
+        self.dynamic = dynamic
         self._getter = _getter
         if self._getter:
             try:
@@ -36,7 +39,7 @@ class ProgressBar:
             self._db_obj.save()
 
     def __str__(self):
-        if conf.PROGRESSBAR_DYNAMIC_UPDATE:
+        if self.dynamic:
             self._update_db_obj()
         repr = f"{self._db_obj.progress} / {self._db_obj.total}"
         if self._db_obj.step:
@@ -50,7 +53,7 @@ class ProgressBar:
 
     @property
     def progress(self):
-        if conf.PROGRESSBAR_DYNAMIC_UPDATE:
+        if self.dynamic:
             self._update_db_obj()
         return self._db_obj.progress
 
@@ -63,7 +66,7 @@ class ProgressBar:
 
     @property
     def step(self):
-        if conf.PROGRESSBAR_DYNAMIC_UPDATE:
+        if self.dynamic:
             self._update_db_obj()
         return self._db_obj.step
 
@@ -74,7 +77,7 @@ class ProgressBar:
 
     @property
     def total(self):
-        if conf.PROGRESSBAR_DYNAMIC_UPDATE:
+        if self.dynamic:
             self._update_db_obj()
         return self._db_obj.total
 
@@ -86,7 +89,7 @@ class ProgressBar:
     @property
     def as_percent(self):
         """return current progress state in percents"""
-        if conf.PROGRESSBAR_DYNAMIC_UPDATE:
+        if self.dynamic:
             self._update_db_obj()
         return f"{(self._db_obj.progress / self._db_obj.total) * 100}%"
 
@@ -108,6 +111,8 @@ class ProgressBar:
         :param step: desired bar step
         """
         if kwargs.get('progress'):
+            if self._db_obj.progress + kwargs.get('progress') >= self._db_obj.total:
+                raise self.exceptions.OutOfRange
             self._db_obj.progress = kwargs['progress']
         if kwargs.get('step'):
             self._db_obj.step = kwargs['step']
