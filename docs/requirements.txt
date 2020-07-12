@@ -1,2 +1,4 @@
 django
 sphinx-rtd-theme
+pytest
+pytest-django
