@@ -4,7 +4,19 @@ from .models import TaskProgress
 
 
 class ProgressBar:
-    """Progressbar manager class"""
+    """Base progressbar class.
+
+    :param task_id: Unique task identifier.
+    :type task_id: str.
+    :param total:   Maximum progressbar value.
+    :type total: int.
+    :param step:    Verbose step name. I.e. 'finding symbolic links'
+    :type step: str.
+    :param dynamic: Enable dynamic updates.
+    :type dynamic: bool.
+
+    :raises: ProgressBar.exceptions.OutOfRange, ProgressBar.exceptions.DoesNotExist
+    """
     exceptions = exceptions
 
     def __init__(
@@ -14,13 +26,7 @@ class ProgressBar:
             step=None,
             dynamic=conf.PROGRESSBAR_DYNAMIC_UPDATE,
             _getter=False):
-        """
-        :param task_id: unique task identifier
-        :param total:   maximum progressbar vallue
-        :param step:    verbose step name. I.e. 'finding symbolic links'
-        :param dynamic: enable dynamic updates
-        :param _getter: internal flag
-        """
+
         self.dynamic = dynamic
         self._getter = _getter
         if self._getter:
@@ -53,6 +59,10 @@ class ProgressBar:
 
     @property
     def progress(self):
+        """Return current bar progress.
+
+        :returns:  int -- current progress.
+        """
         if self.dynamic:
             self._update_db_obj()
         return self._db_obj.progress
@@ -66,6 +76,10 @@ class ProgressBar:
 
     @property
     def step(self):
+        """Return current bar step.
+
+        :returns:  str -- current step.
+        """
         if self.dynamic:
             self._update_db_obj()
         return self._db_obj.step
@@ -77,6 +91,10 @@ class ProgressBar:
 
     @property
     def total(self):
+        """Return total bar value.
+
+        :returns: int -- total value.
+        """
         if self.dynamic:
             self._update_db_obj()
         return self._db_obj.total
@@ -88,27 +106,34 @@ class ProgressBar:
 
     @property
     def as_percent(self):
-        """return current progress state in percents"""
+        """Return current progress state in percents.
+
+        :returns: str -- current progress in percents.
+        """
         if self.dynamic:
             self._update_db_obj()
         return f"{(self._db_obj.progress / self._db_obj.total) * 100}%"
 
     @classmethod
     def get(cls, task_id):
-        """
-        get progressbar for a task
+        """Get progressbar for a task.
 
-        :param task_id: unique task identifier
-        :return: ProgressBar object
+        :param task_id: Unique task identifier.
+        :type task_id: str.
+
+        :returns: ProgressBar object
         """
         return ProgressBar(task_id, _getter=True)
 
     def update(self, **kwargs):
-        """
-        update progressbar state
+        """Update progressbar state.
 
-        :param progress: desired bar progress
-        :param step: desired bar step
+        :param progress: Desired bar progress.
+        :type progress: int.
+        :param step: Desired bar step.
+        :type step: str.
+
+        :return: None
         """
         if kwargs.get('progress'):
             if self._db_obj.progress + kwargs.get('progress') >= self._db_obj.total:
@@ -119,14 +144,19 @@ class ProgressBar:
         self._db_obj.save()
 
     def _update_db_obj(self):
-        """
-        update DB object
+        """Update related database object.
+
+        :return: None
         """
         self._db_obj = TaskProgress.objects.get(
             task_id=self._db_obj.task_id
         )
 
     def finalize(self):
+        """Finalize progressbar, setting *progress* equal to *total* and *Complete* step.
+
+        :return: None
+        """
         self._db_obj.progress = self._db_obj.total
         self._db_obj.step = "Complete"
         self._db_obj.save()

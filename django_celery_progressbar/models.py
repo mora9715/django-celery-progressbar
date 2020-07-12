@@ -2,6 +2,7 @@ from django.db import models
 
 
 class TaskProgress(models.Model):
+    """The model is used as a temporary metadata storage for progressbar"""
     task_id = models.CharField(
         max_length=255,
         unique=True,
